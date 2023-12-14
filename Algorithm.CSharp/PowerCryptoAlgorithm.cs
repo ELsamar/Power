@@ -196,9 +196,6 @@ namespace QuantConnect
             var upperBand = 50000m;
             var lowerBand = 50000m;
 
-            Debug($" Upper Band : {upperBand}");
-            Debug($" lower Band : {lowerBand}");
-
 
             // Utilisez les Bollinger Bands comme déclencheurs pour vos décisions de trading
             if (data.Bars[_btcusd].Close > upperBand && !_invested)
