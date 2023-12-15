@@ -83,12 +83,13 @@ namespace QuantConnect
 
 
             _macd = MACD(_btcusd, FastPeriodMacd, SlowPeriodMacd, 9, MovingAverageType.Exponential, Resolution.Daily, Field.Close);
-
+          
 
             // Dealing with plots
             var stockPlot = new Chart(_ChartName);
             var assetPrice = new Series(_PriceSeriesName, SeriesType.Line, "$", Color.Blue);
             var portFolioValue = new Series(_PortfoliovalueSeriesName, SeriesType.Line, "$", Color.Green);
+            stockPlot.AddSeries(new Series("MACD", SeriesType.Line, "$", Color.Yellow));
             stockPlot.AddSeries(assetPrice);
             stockPlot.AddSeries(portFolioValue);
             AddChart(stockPlot);
@@ -108,9 +109,10 @@ namespace QuantConnect
             _bollingerBands = BB(_btcusd, 20, 2, MovingAverageType.Simple, Resolution.Daily);
 
             // Ajouter l'indicateur à votre chart
-             //AddChartIndicator(_ChartName, _bollingerBands);
-            
-
+            //AddChartIndicator(_ChartName, _bollingerBands);
+            stockPlot.AddSeries(new Series("bollingerUpperBand", SeriesType.Line, "$", Color.Red));
+            stockPlot.AddSeries(new Series("bollingerlowerBand", SeriesType.Line, "$", Color.Red));
+            AddChart(stockPlot);
             // Initialisation du modèle de gestion des risques de stop suiveur
             _trailingStopRiskManagementModel = new TrailingStopRiskManagementModel(0.05m); // 5% de drawdown
 
@@ -122,6 +124,9 @@ namespace QuantConnect
         {
             Plot(_ChartName, _PriceSeriesName, Securities[_btcusd].Price);
             Plot(_ChartName, _PortfoliovalueSeriesName, Portfolio.TotalPortfolioValue);
+            Plot(_ChartName, "bollingerUpperBand", _bollingerBands.UpperBand);
+            Plot(_ChartName, "bollingerlowerBand", _bollingerBands.LowerBand);
+            Plot(_ChartName, "macdSignal ", _macd.Signal);
         }
         private DecisionTree TrainDecisionTree()
         {
@@ -197,7 +202,7 @@ namespace QuantConnect
             var prediction = _decisionTree.Decide(inputFeatures);
 
             // Traiter la sortie du modèle et effectuer des actions en conséquence
-            //  ExecuteActions(prediction);
+           // ExecuteActions(prediction);
 
             //  var upperBand = _bollingerBands.UpperBand.Current.Value;
             //  var lowerBand = _bollingerBands.LowerBand.Current.Value;
